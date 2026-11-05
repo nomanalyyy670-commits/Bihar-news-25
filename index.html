@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BIHAR NEWS 24</title>
+
+<style>
+*{box-sizing:border-box}
+body{
+ margin:0;
+ font-family:Arial,sans-serif;
+ background:#f1f2f5;
+ color:#222;
+}
+header{
+ background:#c90000;
+ color:white;
+ text-align:center;
+ padding:20px 10px;
+}
+header h1{margin:0;font-size:30px}
+header p{margin:8px 0 0}
+.breaking{
+ background:#222;
+ color:white;
+ padding:12px;
+ font-weight:bold;
+}
+nav{
+ display:flex;
+ overflow-x:auto;
+ background:white;
+ padding:14px;
+ gap:20px;
+}
+nav button{
+ border:0;
+ background:white;
+ font-weight:bold;
+ white-space:nowrap;
+}
+.container{
+ max-width:800px;
+ margin:auto;
+ padding:12px;
+}
+input,textarea,select{
+ width:100%;
+ padding:13px;
+ margin:7px 0;
+ border:1px solid #ccc;
+ border-radius:6px;
+}
+button{cursor:pointer}
+.card{
+ background:white;
+ padding:15px;
+ margin:15px 0;
+ border-radius:9px;
+ box-shadow:0 2px 6px #ddd;
+}
+.card h2{font-size:20px}
+.category{color:#c90000;font-weight:bold}
+.action{
+ background:#c90000;
+ color:white;
+ border:0;
+ padding:11px 16px;
+ border-radius:5px;
+}
+.admin{
+ background:white;
+ padding:15px;
+ border-radius:9px;
+ margin-top:25px;
+}
+footer{
+ background:#222;
+ color:white;
+ text-align:center;
+ padding:22px;
+ margin-top:25px;
+}
+</style>
+</head>
+
+<body>
+
+<header>
+<h1>BIHAR NEWS 24</h1>
+<p>बिहार की हर खबर सबसे पहले</p>
+</header>
+
+<div class="breaking">
+🔴 BREAKING NEWS | BIHAR NEWS 24
+</div>
+
+<nav>
+<button onclick="filterNews('सभी')">होम</button>
+<button onclick="filterNews('बिहार')">बिहार</button>
+<button onclick="filterNews('देश')">देश</button>
+<button onclick="filterNews('खेल')">खेल</button>
+<button onclick="filterNews('मनोरंजन')">मनोरंजन</button>
+</nav>
+
+<div class="container">
+
+<h2>🔴 ताजा खबरें</h2>
+
+<input id="search"
+placeholder="खबर खोजें..."
+oninput="searchNews()">
+
+<div id="newsList"></div>
+
+<div class="admin">
+<h2>🔐 Admin Panel</h2>
+<p>अपनी नई खबर यहां लिखें</p>
+
+<input id="title" placeholder="खबर का टाइटल">
+
+<select id="category">
+<option>बिहार</option>
+<option>देश</option>
+<option>खेल</option>
+<option>मनोरंजन</option>
+</select>
+
+<textarea id="description"
+rows="5"
+placeholder="पूरी खबर लिखें"></textarea>
+
+<button class="action" onclick="addNews()">
+खबर Publish करें
+</button>
+</div>
+
+</div>
+
+<footer>
+<h3>BIHAR NEWS 24</h3>
+<p>आपका अपना न्यूज़ पोर्टल</p>
+<p>© 2026 BIHAR NEWS 24</p>
+</footer>
+
+<script>
+
+let news=JSON.parse(
+localStorage.getItem("biharNews24")||"[]"
+);
+
+function showNews(list=news){
+let box=document.getElementById("newsList");
+box.innerHTML="";
+
+if(list.length===0){
+box.innerHTML="<p>अभी कोई खबर नहीं है।</p>";
+return;
+}
+
+list.forEach(item=>{
+let card=document.createElement("div");
+card.className="card";
+
+let category=document.createElement("span");
+category.className="category";
+category.textContent="🔴 "+item.category;
+
+let heading=document.createElement("h2");
+heading.textContent=item.title;
+
+let description=document.createElement("p");
+description.textContent=item.description;
+
+let time=document.createElement("small");
+time.textContent=item.time;
+
+card.append(category,heading,description,time);
+box.appendChild(card);
+});
+}
+
+function addNews(){
+let title=document.getElementById("title").value.trim();
+let description=document.getElementById("description").value.trim();
+let category=document.getElementById("category").value;
+
+if(!title||!description){
+alert("पहले पूरी खबर लिखें");
+return;
+}
+
+news.unshift({
+title:title,
+description:description,
+category:category,
+time:new Date().toLocaleString("hi-IN")
+});
+
+localStorage.setItem(
+"biharNews24",
+JSON.stringify(news)
+);
+
+document.getElementById("title").value="";
+document.getElementById("description").value="";
+
+showNews();
+alert("खबर सेव हो गई!");
+}
+
+function filterNews(category){
+if(category==="सभी"){
+showNews();
+}else{
+showNews(news.filter(item=>item.category===category));
+}
+}
+
+function searchNews(){
+let value=document.getElementById("search").value.toLowerCase();
+
+showNews(news.filter(item=>
+item.title.toLowerCase().includes(value)||
+item.description.toLowerCase().includes(value)
+));
+}
+
+showNews();
+
+</script>
+
+</body>
+</html>
